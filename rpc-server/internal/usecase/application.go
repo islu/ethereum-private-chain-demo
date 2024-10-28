@@ -4,11 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jackc/pgx/v5/pgxpool"
-
 	"github.com/islu/ethereum_private_chain/rpc_server/internal/adapter/blockchain"
 	"github.com/islu/ethereum_private_chain/rpc_server/internal/adapter/repository/postgres"
 	"github.com/islu/ethereum_private_chain/rpc_server/internal/usecase/service/chain"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Application struct {
@@ -27,6 +26,11 @@ type ApplicationParams struct {
 	DBUser       string
 	DBPassword   string
 	DBSchemaName string
+
+	// Ethereum client
+	RpcURL       string
+	KeystorePath string
+	KeystorePass string
 }
 
 func NewApplication(ctx context.Context, param *ApplicationParams) (*Application, error) {
@@ -39,7 +43,10 @@ func NewApplication(ctx context.Context, param *ApplicationParams) (*Application
 
 	// Initialize ethereum client
 	ethereumClient := &blockchain.EthereumPrivateNodeClient{
-		Env: param.Environment,
+		Env:          param.Environment,
+		RpcURL:       param.RpcURL,
+		KeystorePath: param.KeystorePath,
+		KeystorePass: param.KeystorePass,
 	}
 
 	// New application

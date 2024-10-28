@@ -22,7 +22,16 @@ func GetLatestBlockHeight(app *usecase.Application) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 
-		// TODO: not implemented
+		ctx := c.Request.Context()
+
+		// Get latest block height
+		height, commErr := app.ChainService.GetLatestBlockHeight(ctx)
+		if commErr != nil {
+			respondWithError(c, commErr)
+			return
+		}
+
+		fmt.Println(height)
 
 		respondWithSuccess(c)
 	}
@@ -44,12 +53,20 @@ func GetBalance(app *usecase.Application) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 
+		ctx := c.Request.Context()
+
 		// Get account address
 		address := c.Param(KeyAccountAddress)
-		fmt.Println(address)
+
 		// TODO: check valid account address
 
-		// TODO: not implemented
+		// Get balance
+		balance, commErr := app.ChainService.GetBalance(ctx, address)
+		if commErr != nil {
+			respondWithError(c, commErr)
+			return
+		}
+		fmt.Println(balance)
 
 		respondWithSuccess(c)
 	}
@@ -71,12 +88,19 @@ func GetCoinFromFaucet(app *usecase.Application) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 
+		ctx := c.Request.Context()
+
 		// Get account address
 		address := c.Param(KeyAccountAddress)
-		fmt.Println(address)
+
 		// TODO: check valid account address
 
-		// TODO: not implemented
+		// Get coin from faucet
+		commErr := app.ChainService.GetCoinFromFaucet(ctx, address)
+		if commErr != nil {
+			respondWithError(c, commErr)
+			return
+		}
 
 		respondWithSuccess(c)
 	}

@@ -24,6 +24,11 @@ func initAppConfig() *usecase.ApplicationParams {
 	dbPwd := mustGetenv("DB_PASS")
 	dbSchemaName := "public"
 
+	// Ethereum client
+	rpcURL := mustGetenv("RPC_URL")
+	keystorePath := mustGetenv("KEYSTORE_PATH")
+	keystorePass := os.Getenv("KEYSTORE_PASS")
+
 	return &usecase.ApplicationParams{
 		Environment:  env,
 		DBHost:       dbHost,
@@ -32,6 +37,9 @@ func initAppConfig() *usecase.ApplicationParams {
 		DBUser:       dbUser,
 		DBPassword:   dbPwd,
 		DBSchemaName: dbSchemaName,
+		RpcURL:       rpcURL,
+		KeystorePath: keystorePath,
+		KeystorePass: keystorePass,
 	}
 }
 
