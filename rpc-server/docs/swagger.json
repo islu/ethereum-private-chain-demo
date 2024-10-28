@@ -1,0 +1,168 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Ethereum Private Chain RPC Server",
+        "title": "Ethereum Private Chain RPC Server",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/chain/balance/{address}": {
+            "get": {
+                "description": "查詢指定帳戶餘額",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chain"
+                ],
+                "summary": "查詢指定帳戶餘額",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "帳戶地址",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/SuccessMessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessageResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/chain/blocks/height": {
+            "get": {
+                "description": "查詢最新區塊高度",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chain"
+                ],
+                "summary": "查詢最新區塊高度",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/SuccessMessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessageResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/chain/faucet/{address}": {
+            "post": {
+                "description": "取得 0.02 測試幣 (模擬發送交易)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chain"
+                ],
+                "summary": "取得 0.02 測試幣 (模擬發送交易)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "接收帳戶地址",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/SuccessMessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessageResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessageResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ErrorMessageResponse": {
+            "description": "Error message response for 4xx and 5xx errors",
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "HTTP status code",
+                    "type": "integer",
+                    "example": 400
+                },
+                "name": {
+                    "description": "Error name (key)",
+                    "type": "string",
+                    "example": "PARAMETER_INVALID"
+                }
+            }
+        },
+        "SuccessMessageResponse": {
+            "description": "Success message response for 200",
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "name": {
+                    "type": "string",
+                    "example": "SUCCESS"
+                }
+            }
+        }
+    }
+}

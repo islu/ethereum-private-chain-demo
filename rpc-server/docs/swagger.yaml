@@ -1,0 +1,113 @@
+basePath: /api/v1
+definitions:
+  ErrorMessageResponse:
+    description: Error message response for 4xx and 5xx errors
+    properties:
+      code:
+        description: HTTP status code
+        example: 400
+        type: integer
+      name:
+        description: Error name (key)
+        example: PARAMETER_INVALID
+        type: string
+    type: object
+  SuccessMessageResponse:
+    description: Success message response for 200
+    properties:
+      code:
+        example: 200
+        type: integer
+      name:
+        example: SUCCESS
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Ethereum Private Chain RPC Server
+  title: Ethereum Private Chain RPC Server
+  version: "1.0"
+paths:
+  /chain/balance/{address}:
+    get:
+      consumes:
+      - application/json
+      description: 查詢指定帳戶餘額
+      parameters:
+      - description: 帳戶地址
+        in: path
+        name: address
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/SuccessMessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorMessageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorMessageResponse'
+      summary: 查詢指定帳戶餘額
+      tags:
+      - chain
+  /chain/blocks/height:
+    get:
+      consumes:
+      - application/json
+      description: 查詢最新區塊高度
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/SuccessMessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorMessageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorMessageResponse'
+      summary: 查詢最新區塊高度
+      tags:
+      - chain
+  /chain/faucet/{address}:
+    post:
+      consumes:
+      - application/json
+      description: 取得 0.02 測試幣 (模擬發送交易)
+      parameters:
+      - description: 接收帳戶地址
+        in: path
+        name: address
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/SuccessMessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorMessageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorMessageResponse'
+      summary: 取得 0.02 測試幣 (模擬發送交易)
+      tags:
+      - chain
+swagger: "2.0"

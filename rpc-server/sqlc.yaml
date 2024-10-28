@@ -1,0 +1,18 @@
+# Ref: https://docs.sqlc.dev/en/stable/reference/config.html
+
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "db/postgres/query/"
+    schema: "db/postgres/schema/"
+    # database:
+    #   managed: true
+    gen:
+      go:
+        package: "postgres_sqlc"
+        out: "internal/adapter/repository/postgres/postgres_sqlc"
+        sql_package: "pgx/v5"
+        emit_sql_as_comment: true
+        overrides:
+          - db_type: "timestamptz"
+            go_type: "time.Time"
