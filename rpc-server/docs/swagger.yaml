@@ -1,5 +1,19 @@
 basePath: /api/v1
 definitions:
+  BalanceResponse:
+    description: Balance response
+    properties:
+      balance:
+        type: number
+      wei:
+        type: integer
+    type: object
+  BlockResponse:
+    description: Block response
+    properties:
+      height:
+        type: integer
+    type: object
   ErrorMessageResponse:
     description: Error message response for 4xx and 5xx errors
     properties:
@@ -33,7 +47,12 @@ paths:
     get:
       consumes:
       - application/json
-      description: 查詢指定帳戶餘額
+      description: |-
+        查詢指定帳戶餘額
+
+        Error code list
+        - 400: PARAMETER_INVALID
+        - 500: INTERNAL_PROCESS
       parameters:
       - description: 帳戶地址
         in: path
@@ -46,7 +65,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/SuccessMessageResponse'
+            $ref: '#/definitions/BalanceResponse'
         "400":
           description: Bad Request
           schema:
@@ -62,14 +81,18 @@ paths:
     get:
       consumes:
       - application/json
-      description: 查詢最新區塊高度
+      description: |-
+        查詢最新區塊高度
+
+        Error code list
+        - 500: INTERNAL_PROCESS
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/SuccessMessageResponse'
+            $ref: '#/definitions/BlockResponse'
         "400":
           description: Bad Request
           schema:
@@ -85,7 +108,12 @@ paths:
     post:
       consumes:
       - application/json
-      description: 取得 0.02 測試幣 (模擬發送交易)
+      description: |-
+        取得 0.02 測試幣 (模擬發送交易)
+
+        Error code list
+        - 400: PARAMETER_INVALID
+        - 500: INTERNAL_PROCESS
       parameters:
       - description: 接收帳戶地址
         in: path

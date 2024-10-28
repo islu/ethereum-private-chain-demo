@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/chain/balance/{address}": {
             "get": {
-                "description": "查詢指定帳戶餘額",
+                "description": "查詢指定帳戶餘額\n\nError code list\n- 400: PARAMETER_INVALID\n- 500: INTERNAL_PROCESS",
                 "consumes": [
                     "application/json"
                 ],
@@ -41,7 +41,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/SuccessMessageResponse"
+                            "$ref": "#/definitions/BalanceResponse"
                         }
                     },
                     "400": {
@@ -61,7 +61,7 @@ const docTemplate = `{
         },
         "/chain/blocks/height": {
             "get": {
-                "description": "查詢最新區塊高度",
+                "description": "查詢最新區塊高度\n\nError code list\n- 500: INTERNAL_PROCESS",
                 "consumes": [
                     "application/json"
                 ],
@@ -76,7 +76,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/SuccessMessageResponse"
+                            "$ref": "#/definitions/BlockResponse"
                         }
                     },
                     "400": {
@@ -96,7 +96,7 @@ const docTemplate = `{
         },
         "/chain/faucet/{address}": {
             "post": {
-                "description": "取得 0.02 測試幣 (模擬發送交易)",
+                "description": "取得 0.02 測試幣 (模擬發送交易)\n\nError code list\n- 400: PARAMETER_INVALID\n- 500: INTERNAL_PROCESS",
                 "consumes": [
                     "application/json"
                 ],
@@ -140,6 +140,27 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "BalanceResponse": {
+            "description": "Balance response",
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "type": "number"
+                },
+                "wei": {
+                    "type": "integer"
+                }
+            }
+        },
+        "BlockResponse": {
+            "description": "Block response",
+            "type": "object",
+            "properties": {
+                "height": {
+                    "type": "integer"
+                }
+            }
+        },
         "ErrorMessageResponse": {
             "description": "Error message response for 4xx and 5xx errors",
             "type": "object",
