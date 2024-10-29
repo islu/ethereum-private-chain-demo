@@ -6,7 +6,6 @@ import (
 	"log"
 	"math/big"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/ethereum/go-ethereum"
@@ -21,7 +20,6 @@ import (
 // Env variables
 var (
 	RPCAddress   = os.Getenv("RPC_SERVER_ADDRESS")
-	ChianID      = os.Getenv("CHAIN_ID")
 	KeystorePath = os.Getenv("KEYSTORE_PATH")
 	KeystorePass = os.Getenv("KEYSTORE_PASS")
 )
@@ -133,11 +131,11 @@ func sendTx_Simulate(client *ethclient.Client, to common.Address) {
 		[]byte{},
 	)
 
-	id, err := strconv.Atoi(ChianID)
+	chainID, err := client.ChainID(context.Background())
 	if err != nil {
-		log.Fatalf("Failed to parse chain ID: %v", err)
+		log.Fatal(err)
 	}
-	chainID := big.NewInt(int64(id))
+
 	signedTx, err := types.SignTx(tx, types.NewEIP155Signer(chainID), privateKey)
 	if err != nil {
 		log.Fatal(err)
