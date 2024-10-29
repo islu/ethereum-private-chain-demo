@@ -1,0 +1,72 @@
+version: '3.7'
+
+services:
+  geth-bootnode:
+    hostname: geth-bootnode
+    build:
+      context: ./nodes
+      dockerfile: Dockerfile
+    command:
+      --nodekeyhex="391a7d73f6e4936631d4f76cc64d94ec2bd6a08ae9f41da5abef651bf1289407"
+      --nodiscover
+      --ipcdisable
+      --networkid=99906
+      --netrestrict="172.16.254.0/28"
+    networks:
+      priv-eth-net:
+
+  # geth-rpc-endpoint:
+  #   hostname: geth-rpc-endpoint
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.node
+  #   depends_on:
+  #     - geth-bootnode
+  #   command:
+  #     --bootnodes="enode://14143fd744f4e71c7852ac9c58fafd096d95162b476a4739dcd7761c73c7ae52952c88563375ab1f4a3e5019267725292b196ee3f017fb7a3e1e8e713e52c9b0@geth-bootnode:30303"
+  #     --allow-insecure-unlock
+  #     --http
+  #     --http.addr="0.0.0.0"
+  #     --http.api="eth,web3,net,admin,personal"
+  #     --http.corsdomain="http://localhost"
+  #     --http.vhosts="localhost"
+  #     --networkid=99906
+  #     --netrestrict="172.16.254.0/28"
+  #   ports:
+  #     - "8545:8545"
+  #   networks:
+  #     priv-eth-net:
+
+  geth-miner:
+    hostname: geth-miner
+    build:
+      context: ./nodes
+      dockerfile: Dockerfile
+    depends_on:
+      - geth-bootnode
+    command:
+      --bootnodes="enode://14143fd744f4e71c7852ac9c58fafd096d95162b476a4739dcd7761c73c7ae52952c88563375ab1f4a3e5019267725292b196ee3f017fb7a3e1e8e713e52c9b0@geth-bootnode:30303"
+      --networkid=99906
+      --mine
+      --miner.etherbase=0x8De0c53FC169BA09F111aA4170697e8CF42CCbBe
+      --unlock 0x8De0c53FC169BA09F111aA4170697e8CF42CCbBe
+      --netrestrict="172.16.254.0/28"
+      --password root/password.txt
+
+      --allow-insecure-unlock
+      --http
+      --http.addr="0.0.0.0"
+      --http.api="eth,web3,net,admin,personal"
+      --http.corsdomain="http://localhost"
+      --http.vhosts="localhost"
+    ports:
+      - "8545:8545"
+    networks:
+      priv-eth-net:
+
+networks:
+  priv-eth-net:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.16.254.0/28
