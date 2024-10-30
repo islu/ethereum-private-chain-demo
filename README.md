@@ -30,7 +30,10 @@ docker-compose up --build -d
 docker restart ethereum-private-chain-demo-geth-rpc-endpoint-1
 ```
 
-7. 當不再需要服務時，使用以下命令
+7. 開啟 http://localhost:8080/swagger/index.html
+
+
+8. 當不再需要服務時，使用以下命令
 
 ```zsh
 docker-compose down
