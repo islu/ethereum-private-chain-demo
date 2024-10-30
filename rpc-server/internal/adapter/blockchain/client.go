@@ -13,6 +13,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/islu/ethereum_private_chain/rpc_server/internal/domain/blockchain"
 )
 
 type EthereumPrivateNodeClient struct {
@@ -43,6 +44,51 @@ func (c *EthereumPrivateNodeClient) GetLatestBlockNumber() (uint64, error) {
 	return blockNumber, nil
 }
 
+// 取得指定區塊的交易
+func (c *EthereumPrivateNodeClient) GetBlockTransactionsByNumber(blockNumber int64) ([]blockchain.Transaction, error) {
+
+	client, err := c.connect()
+	if err != nil {
+		// log.Printf("Failed to connect to the Ethereum client: %v\n", err)
+		return nil, err
+	}
+	defer client.Close()
+
+	block, err := client.BlockByNumber(context.Background(), big.NewInt(blockNumber))
+	if err != nil {
+		log.Println("Failed to get block: ", err)
+		return nil, err
+	}
+
+	transactions := []blockchain.Transaction{}
+
+	for _, tx := range block.Transactions() {
+
+		from, err := types.Sender(types.NewEIP155Signer(tx.ChainId()), tx)
+		if err != nil {
+			log.Println("Failed to get tx sender: ", err)
+		}
+
+		// Build tx
+		tmpTx := blockchain.Transaction{
+			BlockNumber: block.NumberU64(),
+			From:        from.Hex(),
+			To:          tx.To().Hex(),
+			TxNonce:     tx.Nonce(),
+			TxHash:      tx.Hash().Hex(),
+			TxValue:     tx.Value().Uint64(),
+			TxGas:       tx.Gas(),
+			TxGasPrice:  tx.GasPrice().Uint64(),
+			TxData:      tx.Data(),
+			Timestamp:   time.Unix(int64(block.Time()), 0),
+		}
+
+		transactions = append(transactions, tmpTx)
+	}
+
+	return transactions, nil
+}
+
 // Get account balance
 func (c *EthereumPrivateNodeClient) GetBalance(account common.Address) (*big.Int, error) {
 
@@ -61,7 +107,8 @@ func (c *EthereumPrivateNodeClient) GetBalance(account common.Address) (*big.Int
 	// Get account balance
 	balance, err := client.BalanceAt(context.Background(), account, big.NewInt(int64(blockNumber)))
 	if err != nil {
-		log.Println("Failed to get balance: ", err)
+		log.Println("Get balance failed: ", err)
+		return nil, err
 	}
 	// fmt.Println("Account balance: ", balance)
 

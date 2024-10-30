@@ -60,7 +60,7 @@ func main() {
 	fmt.Println("Block Hash: ", block.Hash().Hex())
 	fmt.Println("Block Time: ", time.Unix(int64(block.Time()), 0))
 	fmt.Println("Block Difficulty: ", block.Difficulty().Uint64())
-	fmt.Println("Tx Hash", block.TxHash().Hex())
+	fmt.Println("Block Tx Hash; ", block.TxHash().Hex())
 	fmt.Println("Parent Hash: ", block.ParentHash().Hex())
 	fmt.Println("Receipt Hash: ", block.ReceiptHash().Hex())
 	fmt.Println()
