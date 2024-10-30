@@ -26,23 +26,77 @@ var (
 
 func main() {
 
-	// Connect to an Ethereum node
 	client, err := ethclient.Dial(RPCAddress)
 	if err != nil {
 		log.Fatalf("Failed to connect to the Ethereum client: %v", err)
 	}
+	defer client.Close()
 
-	// Example call
-
+	from := "0x8de0c53fc169ba09f111aa4170697e8cf42ccbbe"
 	to := "0x6290a833deb0975a76bce27fe6fec6c1fb982aef"
 
-	fmt.Print("[Before] ")
+	fmt.Println()
+	fmt.Println("[Before]")
 	getBalance(client, to)
 
-	sendTx_Simulate(client, common.HexToAddress(to))
+	blockNumber := sendTx_Simulate(client, common.HexToAddress(to))
 
-	fmt.Print("[After] ")
+	fmt.Println()
+	fmt.Println("[After]")
 	getBalance(client, to)
+
+	getTransactionCount(client, common.HexToAddress(from))
+
+	// i := big.NewInt(991)
+	i := blockNumber
+	block, err := client.BlockByNumber(context.Background(), i)
+	if err != nil {
+		log.Fatalf("Failed to retrieve block: %v", err)
+	}
+
+	fmt.Println()
+	fmt.Println("Block Nonce: ", block.Nonce())
+	fmt.Println("Block Number: ", block.NumberU64())
+	fmt.Println("Block Hash: ", block.Hash().Hex())
+	fmt.Println("Block Time: ", time.Unix(int64(block.Time()), 0))
+	fmt.Println("Block Difficulty: ", block.Difficulty().Uint64())
+	fmt.Println("Tx Hash", block.TxHash().Hex())
+	fmt.Println("Parent Hash: ", block.ParentHash().Hex())
+	fmt.Println("Receipt Hash: ", block.ReceiptHash().Hex())
+	fmt.Println()
+
+	for _, tx := range block.Transactions() {
+
+		fmt.Println("Tx Nonce: ", tx.Nonce())
+		if from, err := types.Sender(types.NewEIP155Signer(tx.ChainId()), tx); err == nil {
+			fmt.Println("Tx From: ", from.Hex())
+		}
+		// if from, err := types.Sender(types.NewLondonSigner(tx.ChainId()), tx); err == nil {
+		// 	fmt.Println("Tx From: ", from.Hex())
+		// }
+		fmt.Println("Tx Hash: ", tx.Hash().Hex())
+		fmt.Println("Tx To: ", tx.To().Hex())
+		fmt.Println("Tx Data: ", string(tx.Data()))
+		fmt.Println("Tx Value: ", tx.Value())
+		fmt.Println("Tx Gas: ", tx.Gas())
+		fmt.Println("Tx Gas Price: ", tx.GasPrice())
+		fmt.Println("Tx Type: ", tx.Type())
+		fmt.Println("Tx Time: ", time.Unix(int64(block.Time()), 0))
+	}
+
+}
+
+// Get transaction count
+func getTransactionCount(client *ethclient.Client, account common.Address) uint64 {
+
+	nonce, err := client.NonceAt(context.Background(), account, nil)
+	if err != nil {
+		log.Fatalln("Get nonce failed", err)
+		return 0
+	}
+	fmt.Println("Account nonce: ", nonce)
+
+	return nonce
 }
 
 // Get the latest block number
@@ -74,7 +128,7 @@ func getBalance(client *ethclient.Client, accountAddress string) {
 }
 
 // Send transaction (Simulate)
-func sendTx_Simulate(client *ethclient.Client, to common.Address) {
+func sendTx_Simulate(client *ethclient.Client, to common.Address) *big.Int {
 
 	// Read keystore
 	keyjson, err := os.ReadFile(KeystorePath)
@@ -162,4 +216,6 @@ func sendTx_Simulate(client *ethclient.Client, to common.Address) {
 	}
 	// Status = 1 if transaction succeeded
 	fmt.Printf("tx is confirmed: %v. Block number: %v\n", receipt.Status, receipt.BlockNumber)
+
+	return receipt.BlockNumber
 }
