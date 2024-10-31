@@ -49,6 +49,11 @@ func RegisterHandlers(ginRouter *gin.Engine, app *usecase.Application) *gin.Engi
 		chainGroup.GET("/balance/:"+KeyAccountAddress, GetBalance(app))
 		// 取得 0.02 測試幣 (模擬發送交易)
 		chainGroup.POST("/faucet/:"+KeyAccountAddress, GetCoinFromFaucet(app))
+
+		// 更新指定地址的交易資料進資料庫
+		chainGroup.POST("/tx/:"+KeyAccountAddress+"/sync", SyncTransactionForTargetAddress(app))
+		// 查詢交易資料
+		chainGroup.GET("/tx", GetTransactions(app))
 	}
 
 	return ginRouter

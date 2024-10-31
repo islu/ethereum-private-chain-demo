@@ -4,14 +4,17 @@ definitions:
     description: Balance response
     properties:
       balance:
+        example: 0.02
         type: number
       wei:
+        example: 20000000000000000
         type: integer
     type: object
   BlockResponse:
     description: Block response
     properties:
       height:
+        example: 1030
         type: integer
     type: object
   ErrorMessageResponse:
@@ -36,6 +39,22 @@ definitions:
         example: SUCCESS
         type: string
     type: object
+  TxResponse:
+    description: Transaction response
+    properties:
+      from:
+        example: 0x8de0c53fc169ba09f111aa4170697e8cf42ccbbe
+        type: string
+      height:
+        example: 1
+        type: integer
+      to:
+        example: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+        type: string
+      wei:
+        example: 1000000000000000000
+        type: integer
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -54,7 +73,9 @@ paths:
         - 400: PARAMETER_INVALID
         - 500: INTERNAL_PROCESS
       parameters:
-      - description: 帳戶地址
+      - default: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+        description: 帳戶地址
+        example: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
         in: path
         name: address
         required: true
@@ -115,7 +136,9 @@ paths:
         - 400: PARAMETER_INVALID
         - 500: INTERNAL_PROCESS
       parameters:
-      - description: 接收帳戶地址
+      - default: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+        description: 接收帳戶地址
+        example: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
         in: path
         name: address
         required: true
@@ -136,6 +159,85 @@ paths:
           schema:
             $ref: '#/definitions/ErrorMessageResponse'
       summary: 取得 0.02 測試幣 (模擬發送交易)
+      tags:
+      - chain
+  /chain/tx:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        查詢交易資料
+
+        Error code list
+        - 400: PARAMETER_INVALID
+        - 500: INTERNAL_PROCESS
+      parameters:
+      - default: 10
+        description: Page size
+        example: 10
+        in: query
+        minimum: 10
+        name: size
+        type: integer
+      - default: 0x8De0c53FC169BA09F111aA4170697e8CF42CCbBe
+        description: Account address
+        example: 0x8De0c53FC169BA09F111aA4170697e8CF42CCbBe
+        in: query
+        name: address
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/TxResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorMessageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorMessageResponse'
+      summary: 查詢交易資料
+      tags:
+      - chain
+  /chain/tx/{address}/sync:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        更新指定地址的交易資料進資料庫，再次觸發會等待上次同步完畢，避免重複觸發
+
+        Error code list
+        - 400: PARAMETER_INVALID
+        - 500: INTERNAL_PROCESS
+      parameters:
+      - default: 0x8De0c53FC169BA09F111aA4170697e8CF42CCbBe
+        description: Account address
+        example: 0x8De0c53FC169BA09F111aA4170697e8CF42CCbBe
+        in: path
+        name: address
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/SuccessMessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorMessageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorMessageResponse'
+      summary: 更新指定地址的交易資料進資料庫，再次觸發會等待上次同步完畢，避免重複觸發
       tags:
       - chain
 swagger: "2.0"

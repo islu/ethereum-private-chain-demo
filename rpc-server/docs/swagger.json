@@ -25,6 +25,8 @@
                 "parameters": [
                     {
                         "type": "string",
+                        "default": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+                        "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
                         "description": "帳戶地址",
                         "name": "address",
                         "in": "path",
@@ -104,10 +106,114 @@
                 "parameters": [
                     {
                         "type": "string",
+                        "default": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+                        "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
                         "description": "接收帳戶地址",
                         "name": "address",
                         "in": "path",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/SuccessMessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessageResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/chain/tx": {
+            "get": {
+                "description": "查詢交易資料\n\nError code list\n- 400: PARAMETER_INVALID\n- 500: INTERNAL_PROCESS",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chain"
+                ],
+                "summary": "查詢交易資料",
+                "parameters": [
+                    {
+                        "minimum": 10,
+                        "type": "integer",
+                        "default": 10,
+                        "example": 10,
+                        "description": "Page size",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "0x8De0c53FC169BA09F111aA4170697e8CF42CCbBe",
+                        "example": "0x8De0c53FC169BA09F111aA4170697e8CF42CCbBe",
+                        "description": "Account address",
+                        "name": "address",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/TxResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessageResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/chain/tx/{address}/sync": {
+            "post": {
+                "description": "更新指定地址的交易資料進資料庫，再次觸發會等待上次同步完畢，避免重複觸發\n\nError code list\n- 400: PARAMETER_INVALID\n- 500: INTERNAL_PROCESS",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chain"
+                ],
+                "summary": "更新指定地址的交易資料進資料庫，再次觸發會等待上次同步完畢，避免重複觸發",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "0x8De0c53FC169BA09F111aA4170697e8CF42CCbBe",
+                        "example": "0x8De0c53FC169BA09F111aA4170697e8CF42CCbBe",
+                        "description": "Account address",
+                        "name": "address",
+                        "in": "path"
                     }
                 ],
                 "responses": {
@@ -139,10 +245,12 @@
             "type": "object",
             "properties": {
                 "balance": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 0.02
                 },
                 "wei": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 20000000000000000
                 }
             }
         },
@@ -151,7 +259,8 @@
             "type": "object",
             "properties": {
                 "height": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1030
                 }
             }
         },
@@ -182,6 +291,28 @@
                 "name": {
                     "type": "string",
                     "example": "SUCCESS"
+                }
+            }
+        },
+        "TxResponse": {
+            "description": "Transaction response",
+            "type": "object",
+            "properties": {
+                "from": {
+                    "type": "string",
+                    "example": "0x8de0c53fc169ba09f111aa4170697e8cf42ccbbe"
+                },
+                "height": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "to": {
+                    "type": "string",
+                    "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                },
+                "wei": {
+                    "type": "integer",
+                    "example": 1000000000000000000
                 }
             }
         }

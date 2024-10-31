@@ -17,4 +17,4 @@ CREATE INDEX idx_block_tx_block_number ON block_tx(
     block_number
 );
 
-ALTER TABLE block_tx ADD CONSTRAINT unique_tx_hash UNIQUE (tx_hash);
+-- ALTER TABLE block_tx ADD CONSTRAINT unique_tx_hash UNIQUE (tx_hash);

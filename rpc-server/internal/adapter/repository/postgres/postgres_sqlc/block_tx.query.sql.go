@@ -110,6 +110,26 @@ func (q *Queries) GetBlockTxByTxHash(ctx context.Context, txHash string) (BlockT
 	return i, err
 }
 
+const getMaxBlockNumberByFromAddress = `-- name: GetMaxBlockNumberByFromAddress :one
+SELECT MAX(block_number) AS max_block_number
+FROM block_tx
+WHERE from_address = $1
+GROUP BY from_address
+`
+
+// Get max block number by from_address
+//
+//	SELECT MAX(block_number) AS max_block_number
+//	FROM block_tx
+//	WHERE from_address = $1
+//	GROUP BY from_address
+func (q *Queries) GetMaxBlockNumberByFromAddress(ctx context.Context, fromAddress string) (interface{}, error) {
+	row := q.db.QueryRow(ctx, getMaxBlockNumberByFromAddress, fromAddress)
+	var max_block_number interface{}
+	err := row.Scan(&max_block_number)
+	return max_block_number, err
+}
+
 const listBlockTx = `-- name: ListBlockTx :many
 SELECT seqno, block_number, from_address, to_address, tx_nonce, tx_hash, tx_value, tx_gas, tx_gas_price, tx_time, tx_data, create_time FROM block_tx
 ORDER BY seqno DESC
@@ -123,6 +143,57 @@ LIMIT $1
 //	LIMIT $1
 func (q *Queries) ListBlockTx(ctx context.Context, limit int32) ([]BlockTx, error) {
 	rows, err := q.db.Query(ctx, listBlockTx, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []BlockTx
+	for rows.Next() {
+		var i BlockTx
+		if err := rows.Scan(
+			&i.Seqno,
+			&i.BlockNumber,
+			&i.FromAddress,
+			&i.ToAddress,
+			&i.TxNonce,
+			&i.TxHash,
+			&i.TxValue,
+			&i.TxGas,
+			&i.TxGasPrice,
+			&i.TxTime,
+			&i.TxData,
+			&i.CreateTime,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listBlockTxByFromAddress = `-- name: ListBlockTxByFromAddress :many
+SELECT seqno, block_number, from_address, to_address, tx_nonce, tx_hash, tx_value, tx_gas, tx_gas_price, tx_time, tx_data, create_time FROM block_tx
+WHERE from_address = $2
+ORDER BY seqno DESC
+LIMIT $1
+`
+
+type ListBlockTxByFromAddressParams struct {
+	Limit       int32
+	FromAddress string
+}
+
+// List block transaction by from_address
+//
+//	SELECT seqno, block_number, from_address, to_address, tx_nonce, tx_hash, tx_value, tx_gas, tx_gas_price, tx_time, tx_data, create_time FROM block_tx
+//	WHERE from_address = $2
+//	ORDER BY seqno DESC
+//	LIMIT $1
+func (q *Queries) ListBlockTxByFromAddress(ctx context.Context, arg ListBlockTxByFromAddressParams) ([]BlockTx, error) {
+	rows, err := q.db.Query(ctx, listBlockTxByFromAddress, arg.Limit, arg.FromAddress)
 	if err != nil {
 		return nil, err
 	}

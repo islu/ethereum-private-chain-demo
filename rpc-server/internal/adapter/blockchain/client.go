@@ -72,8 +72,8 @@ func (c *EthereumPrivateNodeClient) GetBlockTransactionsByNumber(blockNumber int
 		// Build tx
 		tmpTx := blockchain.Transaction{
 			BlockNumber: block.NumberU64(),
-			From:        from.Hex(),
-			To:          tx.To().Hex(),
+			From:        from,
+			To:          *tx.To(),
 			TxNonce:     tx.Nonce(),
 			TxHash:      tx.Hash().Hex(),
 			TxValue:     tx.Value().Uint64(),
@@ -113,6 +113,24 @@ func (c *EthereumPrivateNodeClient) GetBalance(account common.Address) (*big.Int
 	// fmt.Println("Account balance: ", balance)
 
 	return balance, nil
+}
+
+// Get transaction count
+func (c *EthereumPrivateNodeClient) GetTransactionCount(account common.Address, blockNumber int64) (uint64, error) {
+
+	client, err := c.connect()
+	if err != nil {
+		return 0, err
+	}
+	defer client.Close()
+
+	nonce, err := client.NonceAt(context.Background(), account, big.NewInt(blockNumber))
+	if err != nil {
+		log.Println("Get nonce failed: ", err)
+		return 0, err
+	}
+
+	return nonce, nil
 }
 
 // Send transaction (Simulate)

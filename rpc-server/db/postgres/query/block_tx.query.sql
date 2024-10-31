@@ -17,9 +17,24 @@ RETURNING *;
 SELECT * FROM block_tx
 WHERE tx_hash = $1;
 
+--Get max block number by from_address
+-- name: GetMaxBlockNumberByFromAddress :one
+SELECT MAX(block_number) AS max_block_number
+FROM block_tx
+WHERE from_address = $1
+GROUP BY from_address;
+
 -- List block transaction
 -- name: ListBlockTx :many
 SELECT * FROM block_tx
+ORDER BY seqno DESC
+LIMIT $1
+;
+
+-- List block transaction by from_address
+-- name: ListBlockTxByFromAddress :many
+SELECT * FROM block_tx
+WHERE from_address = $2
 ORDER BY seqno DESC
 LIMIT $1
 ;

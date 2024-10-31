@@ -64,3 +64,12 @@ var ErrorCodeRemoteProcess = ErrorCode{
 	Name:       "REMOTE_PROCESS_ERROR",
 	StatusCode: http.StatusBadGateway,
 }
+
+/*
+	Other error codes
+*/
+
+var ErrorCodeProcessInProgress = ErrorCode{
+	Name:       "PROCESS_IN_PROGRESS",
+	StatusCode: http.StatusBadRequest,
+}
