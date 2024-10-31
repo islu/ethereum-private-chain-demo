@@ -17,6 +17,6 @@ FROM gcr.io/distroless/static-debian11
 COPY --from=build /go/bin/app /
 
 # Copy sample account
-COPY nodes/sample .
+COPY goblin-chain-poa/sample .
 
 ENTRYPOINT ["/app"]

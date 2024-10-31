@@ -4,7 +4,7 @@ services:
   geth-bootnode:
     hostname: geth-bootnode
     build:
-      context: ./nodes
+      context: ./goblin-chain-poa
       dockerfile: Dockerfile
     command:
       --nodekeyhex="391a7d73f6e4936631d4f76cc64d94ec2bd6a08ae9f41da5abef651bf1289407"
@@ -18,7 +18,7 @@ services:
   geth-rpc-endpoint:
     hostname: geth-rpc-endpoint
     build:
-      context: ./nodes
+      context: ./goblin-chain-poa
       dockerfile: Dockerfile
     depends_on:
       - geth-bootnode
@@ -41,7 +41,7 @@ services:
   geth-miner:
     hostname: geth-miner
     build:
-      context: ./nodes
+      context: ./goblin-chain-poa
       dockerfile: Dockerfile
     depends_on:
       - geth-bootnode
