@@ -1,2 +1,4 @@
 *.env
 *keystore
+
+db_data

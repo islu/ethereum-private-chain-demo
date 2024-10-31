@@ -87,7 +87,7 @@ services:
     container_name: postgres-15
     volumes:
       - ./rpc-server/db/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ~/Postgres_Test:/var/lib/postgresql/data
+      - ./db_data:/var/lib/postgresql/data
     expose:
       - 5432
     ports:
