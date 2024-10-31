@@ -21,7 +21,7 @@ type BlockResponse struct {
 
 // @description	Balance response
 type BalanceResponse struct {
-	Wei     int64   `json:"wei" example:"20000000000000000"`
+	Wei     uint64   `json:"wei" example:"20000000000000000"`
 	Balance float64 `json:"balance" example:"0.02"`
 } //	@name	BalanceResponse
 
@@ -100,7 +100,7 @@ func GetBalance(app *usecase.Application) gin.HandlerFunc {
 
 		response := BalanceResponse{
 			Balance: coin,
-			Wei:     balance.Int64(),
+			Wei:     balance.Uint64(),
 		}
 
 		respondWithJSON(c, http.StatusOK, response)
