@@ -99,6 +99,21 @@ services:
     networks:
       priv-eth-net:
 
+  cronjob:
+    hostname: cronjob
+    build:
+      context: ./cronjob
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - HOST=app
+      - PORT=8080
+      - TARGET_ADDRESS=0x8De0c53FC169BA09F111aA4170697e8CF42CCbBe
+    depends_on:
+      - app
+    networks:
+      priv-eth-net:
+
 networks:
   priv-eth-net:
     driver: bridge
